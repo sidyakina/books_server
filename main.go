@@ -7,20 +7,20 @@ import (
 
 
 func main() {
-	db, err := postgres.ConnectToDB()
+	pg, err := postgres.ConnectToDB()
 	if err != nil {
 		return
 	}
-	defer postgres.CloseConnectToBD(db)
-	err = postgres.AddBook(db, "new book 6", "new author 6 ", 1667)
+	defer pg.CloseConnectToBD()
+	err = pg.AddBook("new book 6", "new author 6 ", 1667)
 	if err != nil {
 		return
 	}
-	err = postgres.DeleteBook(db, 5)
+	err = pg.DeleteBook(5)
 	if err != nil {
 		return
 	}
-	books, _ := postgres.GetAllBooks(db)
+	books, _ := pg.GetAllBooks()
 	for i := 0; i < len(books); i++ {
 		fmt.Printf("i = %v: id %v, %v, %v, %v \n", i + 1, books[i].Id, books[i].Name,
 			books[i].Author, books[i].Year)

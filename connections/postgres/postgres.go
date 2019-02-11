@@ -13,7 +13,16 @@ type Book struct {
 	Year   int16
 }
 
-type ConnectPG = sql.DB
+type execer interface {
+	Query(query string, args ...interface{}) (*sql.Rows, error)
+	QueryRow(query string, args ...interface{}) *sql.Row
+	Exec(query string, args ...interface{}) (sql.Result, error)
+	Close() error
+}
+
+type ConnectPG struct {
+	db execer
+}
 
 func ConnectToDB() (*ConnectPG, error) {
 	db, err := sql.Open("postgres",
@@ -23,70 +32,53 @@ func ConnectToDB() (*ConnectPG, error) {
 		return nil, err
 	}
 	err = db.Ping()
+	pg := ConnectPG{db}
 	if err != nil {
-		CloseConnectToBD(db)
+		pg.CloseConnectToBD()
 		fmt.Print(err)
 		return nil, err
 	}
-	return db, nil
+	return &pg, nil
 }
 
-func CloseConnectToBD(db *ConnectPG) {
-	err := db.Close()
+func (pg *ConnectPG)CloseConnectToBD(){
+	err := pg.db.Close()
 	if err != nil {
 		fmt.Print(err)
 	}
 }
 
-func GetAllBooks(db *ConnectPG) ([]Book, error) {
-	count, err := countBooks(db)
+func (pg *ConnectPG)GetAllBooks() ([]Book, error) {
+	books := make([]Book, 0, 1)
+	rows, err := pg.db.Query("SELECT * FROM books")
 	if err != nil {
 		return []Book{}, err
 	}
-	books := make([]Book, count)
-	rows, err := db.Query("SELECT * FROM books")
-	if err != nil {
-		fmt.Print(err)
-		return []Book{}, err
-	}
-	defer func() {
-		err := rows.Close()
-		if err != nil {
-			fmt.Print(err)
-		}
-	}()
-	i := 0
+	defer rows.Close()
 	for rows.Next() {
-		err = rows.Scan(&books[i].Id, &books[i].Name, &books[i].Author, &books[i].Year)
-		i ++
+		var book Book
+		err = rows.Scan(&book.Id, &book.Name, &book.Author, &book.Year)
+		if err != nil {
+			return []Book{}, err
+		}
+		books = append(books, book)
 	}
-	if rows.Err() != nil {
+	if err = rows.Err(); err != nil {
 		return []Book{}, err
 	}
 	return books, nil
 }
 
-func countBooks(db *ConnectPG) (int32, error) {
-	row := db.QueryRow("SELECT count(id) FROM books")
-	var count int32
-	err := row.Scan(&count)
-	if err != nil {
-		fmt.Printf("Error %v", err)
-		return 0, err
-	}
-	return count, nil
-}
-
-func AddBook(db *ConnectPG, name string, author string, year int16) error {
-	_, err := db.Exec("INSERT INTO books(\"name\", author, \"year\") VALUES ($1, $2, $3)", name, author, year)
+func (pg *ConnectPG)AddBook(name string, author string, year int16) error {
+	_, err := pg.db.Exec("INSERT INTO books(\"name\", author, \"year\") VALUES ($1, $2, $3)", name, author, year)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func DeleteBook(db *ConnectPG, id int32) error {
-	_, err := db.Exec("DELETE FROM books WHERE id = $1", id)
+func (pg *ConnectPG)DeleteBook(id int32) error {
+	_, err := pg.db.Exec("DELETE FROM books WHERE id = $1", id)
 	if err != nil {
 		return err
 	}
