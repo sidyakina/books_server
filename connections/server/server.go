@@ -51,11 +51,16 @@ func handleRequest(conn net.Conn, pg *postgres.ConnectPG) {
 		conn.Write(use_case.ErrorResult("can't unmarshal request"))
 		return
 	}
+	fmt.Printf("get request %v", request)
 	cmd, _ := request["cmd"]
 	var response []byte
 	switch cmd {
 	case "getAllBooks":
 		response = use_case.GetAllBooks(pg)
+	case "addBook":
+		response = use_case.AddBook(pg, request)
+	case "deleteBook":
+		response = use_case.DeleteBook(pg, request)
 	default:
 		response = use_case.ErrorResult(fmt.Sprintf("cmd: %v is not defined", cmd))
 	}

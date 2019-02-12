@@ -43,13 +43,16 @@ func TestConnectPG_AddBook(t *testing.T) {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
 	defer db.Close()
-	mock.ExpectExec(regexp.QuoteMeta(`INSERT INTO books(name, author, year) VALUES ($1, $2, $3)`)).
-		WithArgs("newBook", "author33", 1333).WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectQuery(regexp.QuoteMeta(`INSERT INTO books(name, author, year) VALUES ($1, $2, $3)`)).
+		WithArgs("newBook", "author33", 1333).WillReturnRows(sqlmock.NewRows([]string{"id"}).
+		AddRow(15))
 
 	pg := ConnectPG{db}
-	if err = pg.AddBook("newBook", "author33", 1333); err != nil {
+	id, err := pg.AddBook("newBook", "author33", 1333)
+	if err != nil {
 		t.Errorf("error was not expected while adding book: %s", err)
 	}
+	assert.EqualValues(t, 15, id)
 }
 
 func TestConnectPG_AddBook2(t *testing.T) {
@@ -58,13 +61,15 @@ func TestConnectPG_AddBook2(t *testing.T) {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
 	defer db.Close()
-	mock.ExpectExec(regexp.QuoteMeta(`INSERT INTO books(name, author, year) VALUES ($1, $2, $3)`)).
+	mock.ExpectQuery(regexp.QuoteMeta(`INSERT INTO books(name, author, year) VALUES ($1, $2, $3)`)).
 		WithArgs("newBook", "author33", 1333).WillReturnError(sqlmock.ErrCancelled)
 
 	pg := ConnectPG{db}
-	if err = pg.AddBook("newBook", "author33", 1333); err != sqlmock.ErrCancelled {
+	id, err := pg.AddBook("newBook", "author33", 1333)
+	if  err != sqlmock.ErrCancelled {
 		t.Errorf("error was expected while adding book: %s", err)
 	}
+	assert.EqualValues(t, 0, id)
 }
 
 func TestConnectPG_GetAllBooks(t *testing.T) {

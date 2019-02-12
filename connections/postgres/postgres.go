@@ -69,13 +69,15 @@ func (pg *ConnectPG)GetAllBooks() ([]Book, error) {
 	return books, nil
 }
 
-func (pg *ConnectPG)AddBook(name string, author string, year int16) error {
-	_, err := pg.db.Exec(`INSERT INTO books(name, author, year) 
-                               VALUES ($1, $2, $3)`, name, author, year)
+func (pg *ConnectPG)AddBook(name string, author string, year int16) (int32, error) {
+	row := pg.db.QueryRow(`INSERT INTO books(name, author, year) 
+                               VALUES ($1, $2, $3) RETURNING id`, name, author, year)
+	var id int32
+	err := row.Scan(&id)
 	if err != nil {
-		return err
+		return 0, err
 	}
-	return nil
+	return id, nil
 }
 
 func (pg *ConnectPG)DeleteBook(id int32) error {
