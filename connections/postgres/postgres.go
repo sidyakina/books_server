@@ -26,7 +26,7 @@ type ConnectPG struct {
 
 func ConnectToDB() (*ConnectPG, error) {
 	db, err := sql.Open("postgres",
-		"postgres://postgres:postgres@localhost:5432/complex_test_bd?sslmode=disable")
+		"postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable")
 	if err != nil {
 		fmt.Print(err)
 		return nil, err
@@ -52,6 +52,7 @@ func (pg *ConnectPG)GetAllBooks() ([]Book, error) {
 	books := make([]Book, 0, 1)
 	rows, err := pg.db.Query(`SELECT * FROM books`)
 	if err != nil {
+		fmt.Println(err)
 		return []Book{}, err
 	}
 	defer rows.Close()

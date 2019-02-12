@@ -51,7 +51,7 @@ func handleRequest(conn net.Conn, pg *postgres.ConnectPG) {
 		conn.Write(use_case.ErrorResult("can't unmarshal request"))
 		return
 	}
-	fmt.Printf("get request %v", request)
+	fmt.Printf("get request %v\n", request)
 	cmd, _ := request["cmd"]
 	var response []byte
 	switch cmd {
