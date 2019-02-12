@@ -50,7 +50,7 @@ func (pg *ConnectPG)CloseConnectToBD(){
 
 func (pg *ConnectPG)GetAllBooks() ([]Book, error) {
 	books := make([]Book, 0, 1)
-	rows, err := pg.db.Query("SELECT * FROM books")
+	rows, err := pg.db.Query(`SELECT * FROM books`)
 	if err != nil {
 		return []Book{}, err
 	}
@@ -70,7 +70,8 @@ func (pg *ConnectPG)GetAllBooks() ([]Book, error) {
 }
 
 func (pg *ConnectPG)AddBook(name string, author string, year int16) error {
-	_, err := pg.db.Exec("INSERT INTO books(\"name\", author, \"year\") VALUES ($1, $2, $3)", name, author, year)
+	_, err := pg.db.Exec(`INSERT INTO books(name, author, year) 
+                               VALUES ($1, $2, $3)`, name, author, year)
 	if err != nil {
 		return err
 	}
@@ -78,7 +79,7 @@ func (pg *ConnectPG)AddBook(name string, author string, year int16) error {
 }
 
 func (pg *ConnectPG)DeleteBook(id int32) error {
-	_, err := pg.db.Exec("DELETE FROM books WHERE id = $1", id)
+	_, err := pg.db.Exec(`DELETE FROM books WHERE id = $1`, id)
 	if err != nil {
 		return err
 	}

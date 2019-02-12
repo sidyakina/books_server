@@ -13,7 +13,7 @@ func TestConnectPG_DeleteBook(t *testing.T) {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
 	defer db.Close()
-	mock.ExpectExec(regexp.QuoteMeta("DELETE FROM books WHERE id = $1")).
+	mock.ExpectExec(regexp.QuoteMeta(`DELETE FROM books WHERE id = $1`)).
 		WithArgs(5).WillReturnResult(sqlmock.NewResult(1, 1))
 
 	pg := ConnectPG{db}
@@ -28,7 +28,7 @@ func TestConnectPG_DeleteBook2(t *testing.T) {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
 	defer db.Close()
-	mock.ExpectExec(regexp.QuoteMeta("DELETE FROM books WHERE id = $1")).
+	mock.ExpectExec(regexp.QuoteMeta(`DELETE FROM books WHERE id = $1`)).
 		WithArgs(5).WillReturnError(sqlmock.ErrCancelled)
 
 	pg := ConnectPG{db}
@@ -43,7 +43,7 @@ func TestConnectPG_AddBook(t *testing.T) {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
 	defer db.Close()
-	mock.ExpectExec(regexp.QuoteMeta("INSERT INTO books(\"name\", author, \"year\") VALUES ($1, $2, $3)")).
+	mock.ExpectExec(regexp.QuoteMeta(`INSERT INTO books(name, author, year) VALUES ($1, $2, $3)`)).
 		WithArgs("newBook", "author33", 1333).WillReturnResult(sqlmock.NewResult(1, 1))
 
 	pg := ConnectPG{db}
@@ -58,7 +58,7 @@ func TestConnectPG_AddBook2(t *testing.T) {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
 	defer db.Close()
-	mock.ExpectExec(regexp.QuoteMeta("INSERT INTO books(\"name\", author, \"year\") VALUES ($1, $2, $3)")).
+	mock.ExpectExec(regexp.QuoteMeta(`INSERT INTO books(name, author, year) VALUES ($1, $2, $3)`)).
 		WithArgs("newBook", "author33", 1333).WillReturnError(sqlmock.ErrCancelled)
 
 	pg := ConnectPG{db}
@@ -73,7 +73,7 @@ func TestConnectPG_GetAllBooks(t *testing.T) {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
 	defer db.Close()
-	mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM books")).
+	mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM books`)).
 		WillReturnRows(sqlmock.NewRows([]string{"id", "name", "author", "year"}).
 			AddRow(1, "newBook", "newAuthor", 1333))
 
@@ -92,7 +92,7 @@ func TestConnectPG_GetAllBooks2(t *testing.T) {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
 	defer db.Close()
-	mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM books")).
+	mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM books`)).
 		WillReturnRows(sqlmock.NewRows([]string{"id", "name", "author", "year"}).
 			AddRow(1, "newBook", "newAuthor", 1333).
 			AddRow(2, "newBook2", "newAuthor2", 1222).
@@ -115,7 +115,7 @@ func TestConnectPG_GetAllBooks3(t *testing.T) {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
 	defer db.Close()
-	mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM books")).
+	mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM books`)).
 		WillReturnRows(sqlmock.NewRows([]string{"id", "name", "author", "year"}).
 			AddRow(1, "newBook", "newAuthor", 1333).
 			AddRow(2, "newBook2", "newAuthor2", 1222).RowError(1, sqlmock.ErrCancelled))
@@ -134,7 +134,7 @@ func TestConnectPG_GetAllBooks4(t *testing.T) {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
 	defer db.Close()
-	mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM books")).
+	mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM books`)).
 		WillReturnRows(sqlmock.NewRows([]string{"id", "name", "author"}).
 			AddRow(1, "newBook", "newAuthor"))
 
@@ -151,7 +151,7 @@ func TestConnectPG_GetAllBooks5(t *testing.T) {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
 	defer db.Close()
-	mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM books")).
+	mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM books`)).
 		WillReturnError(sqlmock.ErrCancelled)
 
 	pg := ConnectPG{db}
@@ -168,7 +168,7 @@ func TestConnectPG_GetAllBooks6(t *testing.T) {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
 	defer db.Close()
-	mock.ExpectQuery(regexp.QuoteMeta("SELECT * FROM books")).
+	mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM books`)).
 		WillReturnRows(sqlmock.NewRows([]string{"id", "name", "author"}))
 
 	pg := ConnectPG{db}
