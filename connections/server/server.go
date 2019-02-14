@@ -50,8 +50,8 @@ func handleRequest(conn net.Conn, pg *postgres.ConnectPG) {
 		}
 		if err != nil {
 			fmt.Println("Error reading:", err.Error())
-			conn.Write(use_case.ErrorResult("can't unmarshal request"))
-			continue
+			fmt.Println("Close connect.")
+			return
 		}
 
 		request := make(map[string]interface{})
