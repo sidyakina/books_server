@@ -1,6 +1,7 @@
 package server
 
 import (
+	"bufio"
 	"encoding/json"
 	"fmt"
 	"github.com/sidyakina/books_server/connections/postgres"
@@ -42,8 +43,7 @@ func (s *Server)Start() {
 func handleRequest(conn net.Conn, pg *postgres.ConnectPG) {
 	defer conn.Close()
 	for {
-		buf := make([]byte, 1024)
-		reqLen, err := conn.Read(buf)
+		buf, err := bufio.NewReader(conn).ReadSlice('\n')
 		if err == io.EOF {
 			fmt.Println("Client close connection.")
 			return
@@ -55,7 +55,7 @@ func handleRequest(conn net.Conn, pg *postgres.ConnectPG) {
 		}
 
 		request := make(map[string]interface{})
-		err = json.Unmarshal(buf[:reqLen], &request)
+		err = json.Unmarshal(buf, &request)
 		if err != nil {
 			conn.Write(use_case.ErrorResult("can't unmarshal request"))
 			continue
@@ -67,9 +67,9 @@ func handleRequest(conn net.Conn, pg *postgres.ConnectPG) {
 		case "getAllBooks":
 			response = use_case.GetAllBooks(pg)
 		case "addBook":
-			response = use_case.AddBook(pg, request)
+			response = use_case.AddBook(pg, buf)
 		case "deleteBook":
-			response = use_case.DeleteBook(pg, request)
+			response = use_case.DeleteBook(pg, buf)
 		default:
 			response = use_case.ErrorResult(fmt.Sprintf("cmd: %v is not defined", cmd))
 		}

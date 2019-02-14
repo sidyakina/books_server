@@ -7,10 +7,10 @@ import (
 )
 
 type Book struct {
-	Id     int32
-	Name   string
-	Author string
-	Year   int16
+	Id     int32  `json:"id"`
+	Name   string `json:"name"`
+	Author string `json:"author"`
+	Year   int16  `json:"year"`
 }
 
 type execer interface {
@@ -41,14 +41,14 @@ func ConnectToDB() (*ConnectPG, error) {
 	return &pg, nil
 }
 
-func (pg *ConnectPG)CloseConnectToBD(){
+func (pg *ConnectPG) CloseConnectToBD() {
 	err := pg.db.Close()
 	if err != nil {
 		fmt.Print(err)
 	}
 }
 
-func (pg *ConnectPG)GetAllBooks() ([]Book, error) {
+func (pg *ConnectPG) GetAllBooks() ([]Book, error) {
 	books := make([]Book, 0, 1)
 	rows, err := pg.db.Query(`SELECT * FROM books`)
 	if err != nil {
@@ -70,7 +70,7 @@ func (pg *ConnectPG)GetAllBooks() ([]Book, error) {
 	return books, nil
 }
 
-func (pg *ConnectPG)AddBook(name string, author string, year int16) (int32, error) {
+func (pg *ConnectPG) AddBook(name string, author string, year int16) (int32, error) {
 	row := pg.db.QueryRow(`INSERT INTO books(name, author, year) 
                                VALUES ($1, $2, $3) RETURNING id`, name, author, year)
 	var id int32
@@ -81,7 +81,7 @@ func (pg *ConnectPG)AddBook(name string, author string, year int16) (int32, erro
 	return id, nil
 }
 
-func (pg *ConnectPG)DeleteBook(id int32) error {
+func (pg *ConnectPG) DeleteBook(id int32) error {
 	_, err := pg.db.Exec(`DELETE FROM books WHERE id = $1`, id)
 	if err != nil {
 		return err
