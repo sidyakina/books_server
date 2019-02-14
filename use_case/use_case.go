@@ -15,7 +15,7 @@ func GetAllBooks(pg *postgres.ConnectPG) []byte {
 		result["error"] = ""
 	}
 	sResponse, _ := json.Marshal(result)
-	return sResponse
+	return append(sResponse, byte('\n'))
 
 }
 
@@ -23,7 +23,7 @@ func ErrorResult (msg string) []byte {
 	result := make(map[string]interface{})
 	result["error"] = msg
 	sResponse, _ := json.Marshal(result)
-	return sResponse
+	return append(sResponse, byte('\n'))
 }
 
 func AddBook (pg *postgres.ConnectPG, request map[string]interface{}) []byte {
@@ -55,7 +55,7 @@ func AddBook (pg *postgres.ConnectPG, request map[string]interface{}) []byte {
 	result["id"] = id
 	result["error"] = ""
 	sResponse, _ := json.Marshal(result)
-	return sResponse
+	return append(sResponse, byte('\n'))
 }
 
 func DeleteBook (pg *postgres.ConnectPG, request map[string]interface{}) []byte {
@@ -83,5 +83,5 @@ func DeleteBook (pg *postgres.ConnectPG, request map[string]interface{}) []byte 
 	result["id"] = id
 	result["error"] = ""
 	sResponse, _ := json.Marshal(result)
-	return sResponse
+	return append(sResponse, byte('\n'))
 }

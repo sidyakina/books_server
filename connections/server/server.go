@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/sidyakina/books_server/connections/postgres"
 	"github.com/sidyakina/books_server/use_case"
+	"io"
 	"net"
 )
 
@@ -40,29 +41,41 @@ func (s *Server)Start() {
 
 func handleRequest(conn net.Conn, pg *postgres.ConnectPG) {
 	defer conn.Close()
-	buf := make([]byte, 1024)
-	reqLen, err := conn.Read(buf)
-	if err != nil {
-		fmt.Println("Error reading:", err.Error())
+	for {
+		buf := make([]byte, 1024)
+		reqLen, err := conn.Read(buf)
+		if err == io.EOF {
+			fmt.Println("Client close connection.")
+			return
+		}
+		if err != nil {
+			fmt.Println("Error reading:", err.Error())
+			conn.Write(use_case.ErrorResult("can't unmarshal request"))
+			continue
+		}
+
+		request := make(map[string]interface{})
+		err = json.Unmarshal(buf[:reqLen], &request)
+		if err != nil {
+			conn.Write(use_case.ErrorResult("can't unmarshal request"))
+			continue
+		}
+		fmt.Printf("get request %v\n", request)
+		cmd, _ := request["cmd"]
+		var response []byte
+		switch cmd {
+		case "getAllBooks":
+			response = use_case.GetAllBooks(pg)
+		case "addBook":
+			response = use_case.AddBook(pg, request)
+		case "deleteBook":
+			response = use_case.DeleteBook(pg, request)
+		default:
+			response = use_case.ErrorResult(fmt.Sprintf("cmd: %v is not defined", cmd))
+		}
+		//fmt.Printf("send response %v\n", response)
+		_, _  = conn.Write(response)
 	}
-	request := make(map[string]interface{})
-	err = json.Unmarshal(buf[:reqLen], &request)
-	if err != nil {
-		conn.Write(use_case.ErrorResult("can't unmarshal request"))
-		return
-	}
-	fmt.Printf("get request %v\n", request)
-	cmd, _ := request["cmd"]
-	var response []byte
-	switch cmd {
-	case "getAllBooks":
-		response = use_case.GetAllBooks(pg)
-	case "addBook":
-		response = use_case.AddBook(pg, request)
-	case "deleteBook":
-		response = use_case.DeleteBook(pg, request)
-	default:
-		response = use_case.ErrorResult(fmt.Sprintf("cmd: %v is not defined", cmd))
-	}
-	_, _  = conn.Write(response)
+
+
 }
