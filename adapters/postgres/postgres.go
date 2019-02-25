@@ -35,7 +35,7 @@ func (pg *ConnectDB) GetAllBooks() ([]domain.Book, error) {
 	defer rows.Close()
 	for rows.Next() {
 		var book domain.Book
-		err = rows.Scan(&book.Id, &book.Name, &book.Author, &book.Year)
+		err = rows.Scan(&book.ID, &book.Name, &book.Author, &book.Year)
 		if err != nil {
 			return []domain.Book{}, err
 		}

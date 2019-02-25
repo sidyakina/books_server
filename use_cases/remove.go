@@ -20,7 +20,7 @@ func NewRemoveBookInteractor(bookRepo BookRepoRemove) *RemoveBookInteractor {
 }
 
 func (interactor *RemoveBookInteractor)RemoveBook (request domain.RequestRemove) (int32, string) {
-	id := request.Params.Id
+	id := request.Params.ID
 	if id <= 0 {
 		return 0, "error while deleteBook wrong id"
 	}

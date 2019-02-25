@@ -1,7 +1,7 @@
 package infrastructure
 
 import (
-	"github.com/sidyakina/books_server/adaptors/server"
+	"github.com/sidyakina/books_server/adapters/server"
 	"net"
 )
 

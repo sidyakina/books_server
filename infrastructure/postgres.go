@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	_ "github.com/lib/pq"
-	"github.com/sidyakina/books_server/adaptors/postgres"
+	"github.com/sidyakina/books_server/adapters/postgres"
 )
 
 func ConnectToDB() (*postgres.ConnectDB, error) {

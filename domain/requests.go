@@ -15,5 +15,5 @@ type RequestRemove struct {
 }
 
 type ParamsRemove struct {
-	Id int32 `json:"id"`
+	ID int32 `json:"id"`
 }

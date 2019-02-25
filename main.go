@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/sidyakina/books_server/adaptors/server"
+	"github.com/sidyakina/books_server/adapters/server"
 	"github.com/sidyakina/books_server/infrastructure"
 	"github.com/sidyakina/books_server/use_cases"
 
