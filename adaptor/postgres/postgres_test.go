@@ -16,7 +16,7 @@ func TestConnectPG_DeleteBook(t *testing.T) {
 	mock.ExpectExec(regexp.QuoteMeta(`DELETE FROM books WHERE id = $1`)).
 		WithArgs(5).WillReturnResult(sqlmock.NewResult(1, 1))
 
-	pg := ConnectPG{db}
+	pg := ConnectDB{db}
 	if err = pg.DeleteBook(5); err != nil {
 		t.Errorf("error was not expected while deleting book: %s", err)
 	}
@@ -31,7 +31,7 @@ func TestConnectPG_DeleteBook2(t *testing.T) {
 	mock.ExpectExec(regexp.QuoteMeta(`DELETE FROM books WHERE id = $1`)).
 		WithArgs(5).WillReturnError(sqlmock.ErrCancelled)
 
-	pg := ConnectPG{db}
+	pg := ConnectDB{db}
 	if err = pg.DeleteBook(5); err != sqlmock.ErrCancelled {
 		t.Errorf("error was expected while deleting book: %s", err)
 	}
@@ -47,7 +47,7 @@ func TestConnectPG_AddBook(t *testing.T) {
 		WithArgs("newBook", "author33", 1333).WillReturnRows(sqlmock.NewRows([]string{"id"}).
 		AddRow(15))
 
-	pg := ConnectPG{db}
+	pg := ConnectDB{db}
 	id, err := pg.AddBook("newBook", "author33", 1333)
 	if err != nil {
 		t.Errorf("error was not expected while adding book: %s", err)
@@ -64,7 +64,7 @@ func TestConnectPG_AddBook2(t *testing.T) {
 	mock.ExpectQuery(regexp.QuoteMeta(`INSERT INTO books(name, author, year) VALUES ($1, $2, $3)`)).
 		WithArgs("newBook", "author33", 1333).WillReturnError(sqlmock.ErrCancelled)
 
-	pg := ConnectPG{db}
+	pg := ConnectDB{db}
 	id, err := pg.AddBook("newBook", "author33", 1333)
 	if  err != sqlmock.ErrCancelled {
 		t.Errorf("error was expected while adding book: %s", err)
@@ -82,7 +82,7 @@ func TestConnectPG_GetAllBooks(t *testing.T) {
 		WillReturnRows(sqlmock.NewRows([]string{"id", "name", "author", "year"}).
 			AddRow(1, "newBook", "newAuthor", 1333))
 
-	pg := ConnectPG{db}
+	pg := ConnectDB{db}
 	books, err := pg.GetAllBooks()
 	if err != nil {
 		t.Errorf("error was not expected while getting books: %s", err)
@@ -103,7 +103,7 @@ func TestConnectPG_GetAllBooks2(t *testing.T) {
 			AddRow(2, "newBook2", "newAuthor2", 1222).
 			AddRow(3, "newBook3", "newAuthor3", 1555))
 
-	pg := ConnectPG{db}
+	pg := ConnectDB{db}
 	books, err := pg.GetAllBooks()
 	if err != nil {
 		t.Errorf("error was not expected while getting books: %s", err)
@@ -125,7 +125,7 @@ func TestConnectPG_GetAllBooks3(t *testing.T) {
 			AddRow(1, "newBook", "newAuthor", 1333).
 			AddRow(2, "newBook2", "newAuthor2", 1222).RowError(1, sqlmock.ErrCancelled))
 
-	pg := ConnectPG{db}
+	pg := ConnectDB{db}
 	books, err := pg.GetAllBooks()
 	if err != sqlmock.ErrCancelled {
 		t.Errorf("error was expected while getting books: %s", err)
@@ -143,7 +143,7 @@ func TestConnectPG_GetAllBooks4(t *testing.T) {
 		WillReturnRows(sqlmock.NewRows([]string{"id", "name", "author"}).
 			AddRow(1, "newBook", "newAuthor"))
 
-	pg := ConnectPG{db}
+	pg := ConnectDB{db}
 	books, err := pg.GetAllBooks()
 	assert.Error(t, err)
 	assert.Equal(t, []Book{}, books)
@@ -159,7 +159,7 @@ func TestConnectPG_GetAllBooks5(t *testing.T) {
 	mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM books`)).
 		WillReturnError(sqlmock.ErrCancelled)
 
-	pg := ConnectPG{db}
+	pg := ConnectDB{db}
 	books, err := pg.GetAllBooks()
 	if err != sqlmock.ErrCancelled {
 		t.Errorf("error was expected while getting books: %s", err)
@@ -176,7 +176,7 @@ func TestConnectPG_GetAllBooks6(t *testing.T) {
 	mock.ExpectQuery(regexp.QuoteMeta(`SELECT * FROM books`)).
 		WillReturnRows(sqlmock.NewRows([]string{"id", "name", "author"}))
 
-	pg := ConnectPG{db}
+	pg := ConnectDB{db}
 	books, err := pg.GetAllBooks()
 	assert.NoError(t, err)
 	assert.EqualValues(t, []Book{}, books)

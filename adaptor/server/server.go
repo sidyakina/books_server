@@ -4,43 +4,54 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
-	"github.com/sidyakina/books_server/connections/postgres"
 	"github.com/sidyakina/books_server/use_case"
 	"io"
 	"net"
 )
 
 type Server struct {
-	pg *postgres.ConnectPG
-	listener net.Listener
+	Listener net.Listener
 }
 
-func Init(pg *postgres.ConnectPG, host, port string) (*Server, error){
-	listener, err := net.Listen("tcp", host + ":" + port)
-	if err != nil {
-		return nil, err
-	}
-	return &Server{pg, listener}, nil
+type handlerGet interface {
+	GetAllBooks() []byte
+}
 
+type handlerAdd interface {
+	AddBook (request []byte) []byte
+}
+
+type handlerRemove interface {
+	RemoveBook (request [] byte) []byte
+}
+
+type Handlers struct {
+	get handlerGet
+	add handlerAdd
+	remove handlerRemove
+}
+
+func InitHandlers(hget handlerGet, hadd handlerAdd, hremove handlerRemove) *Handlers {
+	return &Handlers{get: hget, add: hadd, remove: hremove}
 }
 
 func (s *Server) Stop () error{
-	return s.listener.Close()
+	return s.Listener.Close()
 }
 
-func (s *Server)Start() {
+func (s *Server)Start(handlers *Handlers) {
 	for {
-		conn, err := s.listener.Accept()
+		conn, err := s.Listener.Accept()
 		if err != nil {
 			fmt.Println("Error accepting: ", err.Error())
-			//os.Exit(1)
+			return
 		}
-		go handleRequest(conn, s.pg)
+		go handleRequest(conn, handlers)
 	}
 }
 
 
-func handleRequest(conn net.Conn, pg *postgres.ConnectPG) {
+func handleRequest(conn net.Conn, handlers *Handlers) {
 	defer conn.Close()
 	for {
 		buf, err := bufio.NewReader(conn).ReadSlice('\n')
@@ -65,11 +76,12 @@ func handleRequest(conn net.Conn, pg *postgres.ConnectPG) {
 		var response []byte
 		switch cmd {
 		case "getAllBooks":
-			response = use_case.GetAllBooks(pg)
+			response = handlers.get.GetAllBooks()
 		case "addBook":
-			response = use_case.AddBook(pg, buf)
+
+			response = handlers.add.AddBook(buf)
 		case "deleteBook":
-			response = use_case.DeleteBook(pg, buf)
+			response = handlers.remove.RemoveBook(buf)
 		default:
 			response = use_case.ErrorResult(fmt.Sprintf("cmd: %v is not defined", cmd))
 		}

@@ -4,7 +4,6 @@ services:
   postgres:
     image: postgres:9.5
     volumes:
-#      - .:/docker-entrypoint-initdb.d
       - ./pginit:/docker-entrypoint-initdb.d
     ports:
        - 5432:5432
