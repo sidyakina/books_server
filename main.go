@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/sidyakina/books_server/adaptor/server"
+	"github.com/sidyakina/books_server/adaptors/server"
 	"github.com/sidyakina/books_server/infrastructure"
-	"github.com/sidyakina/books_server/use_case"
+	"github.com/sidyakina/books_server/use_cases"
 
 	"log"
 )
@@ -14,9 +14,9 @@ func main() {
 		log.Fatal(err)
 	}
 	defer pg.CloseConnectToBD()
-	getInt := use_case.NewGetBookInteractor(pg)
-	addInt := use_case.NewAddBookInteractor(pg)
-	remInt := use_case.NewRemoveBookInteractor(pg)
+	getInt := use_cases.NewGetBookInteractor(pg)
+	addInt := use_cases.NewAddBookInteractor(pg)
+	remInt := use_cases.NewRemoveBookInteractor(pg)
 	handlers := server.InitHandlers(getInt, addInt, remInt)
 
 	sr, err := infrastructure.InitServer("localhost", "3333")
