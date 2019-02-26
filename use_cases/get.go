@@ -2,6 +2,7 @@ package use_cases
 
 import (
 	"fmt"
+
 	"github.com/sidyakina/books_server/domain"
 )
 
@@ -19,7 +20,7 @@ func NewGetBookInteractor(bookRepo BookRepoGet) *GetBookInteractor {
 	}
 }
 
-func (interactor *GetBookInteractor)GetAllBooks() ([]domain.Book, string) {
+func (interactor *GetBookInteractor) GetAllBooks() ([]domain.Book, string) {
 	books, err := interactor.bookRepo.GetAllBooks()
 	if err != nil {
 		fmt.Print(err)

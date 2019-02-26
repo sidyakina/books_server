@@ -6,4 +6,3 @@ type Book struct {
 	Author string `json:"author"`
 	Year   int16  `json:"year"`
 }
-

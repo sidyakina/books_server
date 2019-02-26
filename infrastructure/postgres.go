@@ -3,6 +3,7 @@ package infrastructure
 import (
 	"database/sql"
 	"fmt"
+
 	_ "github.com/lib/pq"
 	"github.com/sidyakina/books_server/adapters/postgres"
 )

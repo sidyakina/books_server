@@ -1,10 +1,13 @@
 package postgres
 
 import (
-	"github.com/stretchr/testify/assert"
-	"gopkg.in/DATA-DOG/go-sqlmock.v1"
 	"regexp"
 	"testing"
+
+	"github.com/sidyakina/books_server/domain"
+
+	"github.com/stretchr/testify/assert"
+	"gopkg.in/DATA-DOG/go-sqlmock.v1"
 )
 
 func TestConnectPG_DeleteBook(t *testing.T) {
@@ -66,7 +69,7 @@ func TestConnectPG_AddBook2(t *testing.T) {
 
 	pg := ConnectDB{db}
 	id, err := pg.AddBook("newBook", "author33", 1333)
-	if  err != sqlmock.ErrCancelled {
+	if err != sqlmock.ErrCancelled {
 		t.Errorf("error was expected while adding book: %s", err)
 	}
 	assert.EqualValues(t, 0, id)
@@ -87,7 +90,7 @@ func TestConnectPG_GetAllBooks(t *testing.T) {
 	if err != nil {
 		t.Errorf("error was not expected while getting books: %s", err)
 	}
-	expected := []Book{{1, "newBook", "newAuthor", 1333}}
+	expected := []domain.Book{{ID: 1, Name: "newBook", Author: "newAuthor", Year: 1333}}
 	assert.Equal(t, expected, books)
 }
 
@@ -108,9 +111,9 @@ func TestConnectPG_GetAllBooks2(t *testing.T) {
 	if err != nil {
 		t.Errorf("error was not expected while getting books: %s", err)
 	}
-	expected := []Book{{1, "newBook", "newAuthor", 1333},
-		{2, "newBook2", "newAuthor2", 1222},
-		{3, "newBook3", "newAuthor3", 1555}}
+	expected := []domain.Book{{ID: 1, Name: "newBook", Author: "newAuthor", Year: 1333},
+		{ID: 2, Name: "newBook2", Author: "newAuthor2", Year: 1222},
+		{ID: 3, Name: "newBook3", Author: "newAuthor3", Year: 1555}}
 	assert.Equal(t, expected, books)
 }
 
@@ -130,7 +133,7 @@ func TestConnectPG_GetAllBooks3(t *testing.T) {
 	if err != sqlmock.ErrCancelled {
 		t.Errorf("error was expected while getting books: %s", err)
 	}
-	assert.Equal(t, []Book{}, books)
+	assert.Equal(t, []domain.Book{}, books)
 }
 
 func TestConnectPG_GetAllBooks4(t *testing.T) {
@@ -146,9 +149,8 @@ func TestConnectPG_GetAllBooks4(t *testing.T) {
 	pg := ConnectDB{db}
 	books, err := pg.GetAllBooks()
 	assert.Error(t, err)
-	assert.Equal(t, []Book{}, books)
+	assert.Equal(t, []domain.Book{}, books)
 }
-
 
 func TestConnectPG_GetAllBooks5(t *testing.T) {
 	db, mock, err := sqlmock.New()
@@ -164,7 +166,7 @@ func TestConnectPG_GetAllBooks5(t *testing.T) {
 	if err != sqlmock.ErrCancelled {
 		t.Errorf("error was expected while getting books: %s", err)
 	}
-	assert.Equal(t, []Book{}, books)
+	assert.Equal(t, []domain.Book{}, books)
 }
 
 func TestConnectPG_GetAllBooks6(t *testing.T) {
@@ -179,5 +181,5 @@ func TestConnectPG_GetAllBooks6(t *testing.T) {
 	pg := ConnectDB{db}
 	books, err := pg.GetAllBooks()
 	assert.NoError(t, err)
-	assert.EqualValues(t, []Book{}, books)
+	assert.EqualValues(t, []domain.Book{}, books)
 }

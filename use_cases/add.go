@@ -2,8 +2,9 @@ package use_cases
 
 import (
 	"fmt"
-	"github.com/sidyakina/books_server/domain"
 	"time"
+
+	"github.com/sidyakina/books_server/domain"
 )
 
 type BookRepoAdd interface {
@@ -20,11 +21,11 @@ func NewAddBookInteractor(bookRepo BookRepoAdd) *AddBookInteractor {
 	}
 }
 
-func (interactor *AddBookInteractor)AddBook (request domain.RequestAdd) (int32, string) {
+func (interactor *AddBookInteractor) AddBook(request domain.RequestAdd) (int32, string) {
 	name := request.Params.Name
 	author := request.Params.Author
 	year := request.Params.Year
-	if int(year) > time.Now().Year() || year <= 0{
+	if int(year) > time.Now().Year() || year <= 0 {
 		return 0, "error while addBook: wrong year"
 	}
 	if name == "" {
@@ -40,4 +41,3 @@ func (interactor *AddBookInteractor)AddBook (request domain.RequestAdd) (int32, 
 	}
 	return id, ""
 }
-

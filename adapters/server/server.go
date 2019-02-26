@@ -4,9 +4,10 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
-	"github.com/sidyakina/books_server/domain"
 	"io"
 	"net"
+
+	"github.com/sidyakina/books_server/domain"
 )
 
 type Server struct {
@@ -18,16 +19,16 @@ type handlerGet interface {
 }
 
 type handlerAdd interface {
-	AddBook (request domain.RequestAdd) (int32, string)
+	AddBook(request domain.RequestAdd) (int32, string)
 }
 
 type handlerRemove interface {
-	RemoveBook (request domain.RequestRemove) (int32, string)
+	RemoveBook(request domain.RequestRemove) (int32, string)
 }
 
 type Handlers struct {
-	get handlerGet
-	add handlerAdd
+	get    handlerGet
+	add    handlerAdd
 	remove handlerRemove
 }
 
@@ -35,11 +36,11 @@ func InitHandlers(hget handlerGet, hadd handlerAdd, hremove handlerRemove) *Hand
 	return &Handlers{get: hget, add: hadd, remove: hremove}
 }
 
-func (s *Server) Stop () error{
+func (s *Server) Stop() error {
 	return s.Listener.Close()
 }
 
-func (s *Server)Start(handlers *Handlers) {
+func (s *Server) Start(handlers *Handlers) {
 	for {
 		conn, err := s.Listener.Accept()
 		if err != nil {
@@ -49,7 +50,6 @@ func (s *Server)Start(handlers *Handlers) {
 		go newHandlerRequests(conn, handlers)
 	}
 }
-
 
 func newHandlerRequests(conn net.Conn, handlers *Handlers) {
 	defer conn.Close()
@@ -64,11 +64,11 @@ func newHandlerRequests(conn net.Conn, handlers *Handlers) {
 			fmt.Println("Close connect.")
 			return
 		}
-		_, _  = conn.Write(handleRequest(buf, handlers))
+		_, _ = conn.Write(handleRequest(buf, handlers))
 	}
 }
 
-func handleRequest(buf []byte, handlers *Handlers) []byte{
+func handleRequest(buf []byte, handlers *Handlers) []byte {
 	request := make(map[string]interface{})
 	result := make(map[string]interface{})
 	err := json.Unmarshal(buf, &request)
