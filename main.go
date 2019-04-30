@@ -1,15 +1,28 @@
 package main
 
 import (
+	"github.com/sidyakina/books_server/adapters/postgres"
 	"github.com/sidyakina/books_server/adapters/server"
 	"github.com/sidyakina/books_server/infrastructure"
 	"github.com/sidyakina/books_server/use_cases"
 
 	"log"
+	"time"
 )
 
+const reconnects = 5
+
 func main() {
-	pg, err := infrastructure.ConnectToDB()
+	var pg *postgres.ConnectDB
+	var err error
+	for i := 0; i < reconnects; i++ {
+		pg, err = infrastructure.ConnectToDB()
+		if err == nil {
+			break
+		}
+		log.Println("Err", err)
+		time.Sleep(10 * time.Second)
+	}
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -24,5 +37,6 @@ func main() {
 		log.Fatal(err)
 	}
 	defer sr.Stop()
+	log.Println("Server started")
 	sr.Start(handlers)
 }

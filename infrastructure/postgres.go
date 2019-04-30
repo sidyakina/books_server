@@ -9,10 +9,12 @@ import (
 )
 
 func ConnectToDB() (*postgres.ConnectDB, error) {
+	//db, err := sql.Open("postgres",
+	//	"postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable")
 	db, err := sql.Open("postgres",
-		"postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable")
+		"postgres://postgres:postgres@postgres:5432/postgres?sslmode=disable")
 	if err != nil {
-		fmt.Print(err)
+		fmt.Println("err: ", err)
 		return nil, err
 	}
 	err = db.Ping()

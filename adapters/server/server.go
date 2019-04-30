@@ -4,10 +4,10 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
-	"io"
-	"net"
-
 	"github.com/sidyakina/books_server/domain"
+	"io"
+	"log"
+	"net"
 )
 
 type Server struct {
@@ -44,7 +44,7 @@ func (s *Server) Start(handlers *Handlers) {
 	for {
 		conn, err := s.Listener.Accept()
 		if err != nil {
-			fmt.Println("Error accepting: ", err.Error())
+			log.Println("Error accepting: ", err.Error())
 			return
 		}
 		go newHandlerRequests(conn, handlers)
