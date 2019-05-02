@@ -6,8 +6,8 @@ import (
 	"github.com/sidyakina/books_server/adapters/server"
 )
 
-func InitServer(host, port string) (*server.Server, error) {
-	listener, err := net.Listen("tcp", host+":"+port)
+func InitServer(port string) (*server.Server, error) {
+	listener, err := net.Listen("tcp", ":"+port)
 	if err != nil {
 		return nil, err
 	}

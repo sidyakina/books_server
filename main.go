@@ -32,7 +32,7 @@ func main() {
 	remInt := use_cases.NewRemoveBookInteractor(pg)
 	handlers := server.InitHandlers(getInt, addInt, remInt)
 
-	sr, err := infrastructure.InitServer("localhost", "3333")
+	sr, err := infrastructure.InitServer("3333")
 	if err != nil {
 		log.Fatal(err)
 	}
