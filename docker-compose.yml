@@ -15,5 +15,13 @@ services:
     image: books_server:latest
     ports:
       - 3333:3333
+    environment:
+      - RECONNECT=6
+      - PG_HOST=postgres
+      - PG_PORT=5432
+      - PG_USER=postgres
+      - PG_PASS=postgres
+      - PG_DB_NAME=postgres
+      - SERVER_PORT=3333
     depends_on:
       - postgres

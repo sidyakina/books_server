@@ -10,13 +10,14 @@ import (
 	"time"
 )
 
-const reconnects = 5
-
 func main() {
+	config, err := setConfig()
+	if err != nil {
+		log.Fatal(err)
+	}
 	var pg *postgres.ConnectDB
-	var err error
-	for i := 0; i < reconnects; i++ {
-		pg, err = infrastructure.ConnectToDB()
+	for i := 0; i < config.reconnect; i++ {
+		pg, err = infrastructure.ConnectToDB(config.pgHost, config.pgPort, config.pgUser, config.pgPass, config.pgNameDB)
 		if err == nil {
 			break
 		}
@@ -32,7 +33,7 @@ func main() {
 	remInt := use_cases.NewRemoveBookInteractor(pg)
 	handlers := server.InitHandlers(getInt, addInt, remInt)
 
-	sr, err := infrastructure.InitServer("3333")
+	sr, err := infrastructure.InitServer(config.serverPort)
 	if err != nil {
 		log.Fatal(err)
 	}
