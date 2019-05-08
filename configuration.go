@@ -16,6 +16,10 @@ type configTCP struct {
 	serverPort string
 }
 
+type configNATS struct {
+	natsPort, natsHost string
+}
+
 func setConfig() (config, error) {
 	c := config{}
 	r, err := strconv.Atoi(os.Getenv("RECONNECT"))
@@ -60,5 +64,20 @@ func setConfigTCP()(configTCP, error) {
 		temp = "3333"
 	}
 	c.serverPort = temp
+	return c, nil
+}
+
+func setConfigNATS()(configNATS, error) {
+	c := configNATS{}
+	temp := os.Getenv("NATS_PORT")
+	if temp == "" {
+		temp = "4222"
+	}
+	c.natsPort = temp
+	temp = os.Getenv("NATS_HOST")
+	if temp == "" {
+		return c, errors.New("empty nats host")
+	}
+	c.natsHost = temp
 	return c, nil
 }

@@ -15,7 +15,7 @@ func ConnectToDB(host, port, user, pass, dbname string) (*postgres.ConnectDB, er
 	db, err := sql.Open("postgres",
 		"postgres://" + user + ":" + pass + "@" + host + ":" + port + "/" + dbname + "?sslmode=disable")
 	if err != nil {
-		fmt.Println("err: ", err)
+		//fmt.Println("err: ", err)
 		return nil, err
 	}
 	err = db.Ping()

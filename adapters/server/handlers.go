@@ -36,7 +36,7 @@ func handleRequest(buf []byte, handlers *Handlers) []byte {
 		fmt.Println(err)
 		result["error"] = "error: can't unmarshal request."
 		response, _ := json.Marshal(result)
-		return append(response, byte('\n'))
+		return response
 	}
 	fmt.Printf("get request %v\n", request)
 	cmd, _ := request["cmd"]
@@ -74,5 +74,5 @@ func handleRequest(buf []byte, handlers *Handlers) []byte {
 	}
 	//fmt.Printf("send response %v\n", response)
 	response, _ := json.Marshal(result)
-	return append(response, byte('\n'))
+	return response
 }

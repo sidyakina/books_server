@@ -41,6 +41,6 @@ func newHandlerRequests(conn net.Conn, handlers *Handlers) {
 			fmt.Println("Close connect.")
 			return
 		}
-		_, _ = conn.Write(handleRequest(buf, handlers))
+		_, _ = conn.Write(append(handleRequest(buf, handlers), byte('\n')))
 	}
 }

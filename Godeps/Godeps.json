@@ -12,6 +12,39 @@
 			"ImportPath": "github.com/lib/pq/oid",
 			"Comment": "v1.0.0-6-g9eb73ef",
 			"Rev": "9eb73efc1fcc404148b56765b0d3f61d9a5ef8ee"
+		},
+		{
+			"ImportPath": "github.com/nats-io/go-nats",
+			"Comment": "v1.7.2-21-g36d30b0",
+			"Rev": "36d30b0ba7aa260ae25b4f3d312b2a700106fd78"
+		},
+		{
+			"ImportPath": "github.com/nats-io/go-nats/encoders/builtin",
+			"Comment": "v1.7.2-21-g36d30b0",
+			"Rev": "36d30b0ba7aa260ae25b4f3d312b2a700106fd78"
+		},
+		{
+			"ImportPath": "github.com/nats-io/go-nats/util",
+			"Comment": "v1.7.2-21-g36d30b0",
+			"Rev": "36d30b0ba7aa260ae25b4f3d312b2a700106fd78"
+		},
+		{
+			"ImportPath": "github.com/nats-io/nkeys",
+			"Comment": "v0.0.2",
+			"Rev": "1546a3320a8f195a5b5c84aef8309377c2e411d5"
+		},
+		{
+			"ImportPath": "github.com/nats-io/nuid",
+			"Comment": "v1.0.1",
+			"Rev": "4b96681fa6d28dd0ab5fe79bac63b3a493d9ee94"
+		},
+		{
+			"ImportPath": "golang.org/x/crypto/ed25519",
+			"Rev": "e1dfcc566284e143ba8f9afbb3fa563f2a0d212b"
+		},
+		{
+			"ImportPath": "golang.org/x/crypto/ed25519/internal/edwards25519",
+			"Rev": "e1dfcc566284e143ba8f9afbb3fa563f2a0d212b"
 		}
 	]
 }

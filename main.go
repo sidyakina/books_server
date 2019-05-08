@@ -52,8 +52,17 @@ func main() {
 func initServer(typeServer string) (Server, error) {
 	switch typeServer {
 	case "TCP":
-		configTCP, _ := setConfigTCP()
+		configTCP, err := setConfigTCP()
+		if err != nil {
+			return nil, err
+		}
 		return infrastructure.InitServerTCP(configTCP.serverPort)
+	case "NATS":
+		configNATS, err := setConfigNATS()
+		if err != nil {
+			return nil, err
+		}
+		return infrastructure.InitServerNATS(configNATS.natsHost, configNATS.natsPort)
 	default:
 		return nil, errors.New("undefined type server")
 	}
