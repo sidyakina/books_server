@@ -1,14 +1,20 @@
 package main
 
 import (
+	"errors"
 	"github.com/sidyakina/books_server/adapters/postgres"
 	"github.com/sidyakina/books_server/adapters/server"
 	"github.com/sidyakina/books_server/infrastructure"
 	"github.com/sidyakina/books_server/use_cases"
-
 	"log"
+	"os"
 	"time"
 )
+
+type Server interface {
+	Stop() error
+	Start(handlers *server.Handlers)
+}
 
 func main() {
 	config, err := setConfig()
@@ -33,11 +39,23 @@ func main() {
 	remInt := use_cases.NewRemoveBookInteractor(pg)
 	handlers := server.InitHandlers(getInt, addInt, remInt)
 
-	sr, err := infrastructure.InitServer(config.serverPort)
+	sr, err := initServer(os.Getenv("SERVER_TYPE"))
+
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer sr.Stop()
 	log.Println("Server started")
 	sr.Start(handlers)
+}
+
+func initServer(typeServer string) (Server, error) {
+	switch typeServer {
+	case "TCP":
+		configTCP, _ := setConfigTCP()
+		return infrastructure.InitServerTCP(configTCP.serverPort)
+	default:
+		return nil, errors.New("undefined type server")
+	}
+
 }

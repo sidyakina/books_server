@@ -1,16 +1,15 @@
 package infrastructure
 
 import (
-	"net"
-
 	"github.com/sidyakina/books_server/adapters/server"
+	"net"
 )
 
-func InitServer(port string) (*server.Server, error) {
+func InitServerTCP(port string) (*server.ServerTCP, error) {
 	listener, err := net.Listen("tcp", ":"+port)
 	if err != nil {
 		return nil, err
 	}
-	return &server.Server{listener}, nil
+	return &server.ServerTCP{listener}, nil
 
 }

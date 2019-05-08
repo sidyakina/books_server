@@ -23,5 +23,6 @@ services:
       - PG_PASS=postgres
       - PG_DB_NAME=postgres
       - SERVER_PORT=3333
+      - SERVER_TYPE=TCP
     depends_on:
       - postgres

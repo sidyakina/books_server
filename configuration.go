@@ -9,7 +9,11 @@ import (
 
 type config struct {
 	reconnect int
-	serverPort, pgHost, pgPort, pgPass, pgUser, pgNameDB string
+	pgHost, pgPort, pgPass, pgUser, pgNameDB string
+}
+
+type configTCP struct {
+	serverPort string
 }
 
 func setConfig() (config, error) {
@@ -46,8 +50,12 @@ func setConfig() (config, error) {
 		return c, errors.New("empty PG_DB_NAME")
 	}
 	c.pgNameDB = temp
+	return c, nil
+}
 
-	temp = os.Getenv("SERVER_PORT")
+func setConfigTCP()(configTCP, error) {
+	c := configTCP{}
+	temp := os.Getenv("SERVER_PORT")
 	if temp == "" {
 		temp = "3333"
 	}

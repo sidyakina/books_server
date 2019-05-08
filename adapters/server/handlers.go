@@ -1,18 +1,10 @@
 package server
 
 import (
-	"bufio"
 	"encoding/json"
 	"fmt"
 	"github.com/sidyakina/books_server/domain"
-	"io"
-	"log"
-	"net"
 )
-
-type Server struct {
-	Listener net.Listener
-}
 
 type handlerGet interface {
 	GetAllBooks() ([]domain.Book, string)
@@ -34,38 +26,6 @@ type Handlers struct {
 
 func InitHandlers(hget handlerGet, hadd handlerAdd, hremove handlerRemove) *Handlers {
 	return &Handlers{get: hget, add: hadd, remove: hremove}
-}
-
-func (s *Server) Stop() error {
-	return s.Listener.Close()
-}
-
-func (s *Server) Start(handlers *Handlers) {
-	for {
-		conn, err := s.Listener.Accept()
-		if err != nil {
-			log.Println("Error accepting: ", err.Error())
-			return
-		}
-		go newHandlerRequests(conn, handlers)
-	}
-}
-
-func newHandlerRequests(conn net.Conn, handlers *Handlers) {
-	defer conn.Close()
-	for {
-		buf, err := bufio.NewReader(conn).ReadSlice('\n')
-		if err == io.EOF {
-			fmt.Println("Client close connection.")
-			return
-		}
-		if err != nil {
-			fmt.Println("Error reading:", err.Error())
-			fmt.Println("Close connect.")
-			return
-		}
-		_, _ = conn.Write(handleRequest(buf, handlers))
-	}
 }
 
 func handleRequest(buf []byte, handlers *Handlers) []byte {
